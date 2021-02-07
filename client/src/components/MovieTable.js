@@ -1,28 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Table } from 'reactstrap';
 
-const MovieTable = (props) => {
+const MovieTable = ({ movieObj }) => {
+  let movieList = Object.keys(movieObj);
 
-  return (
-    <div>
-      <Table>
-        <thead>
-          <tr>
-            <th>
-              #
-            </th>
-            <th>
-              Name
-            </th>
-            <th>First Added</th>
-          </tr>
-        </thead>
-        <tbody>
-          {console.log("PROPS HERE: ", props)}
-        </tbody>
-      </Table>
-    </div>
+  return (   
+    movieList.map(movie => {
+      <tr key={movieList.indexOf(movie)}>
+        <th scope="row">{movieList.indexOf(movie)}</th>
+        <td>{movie}</td>
+        <td>{movieObj[movie]}</td>
+      </tr>
+    })
   );
-}
+};
 
 export default MovieTable;

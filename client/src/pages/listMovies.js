@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { MovieTable } from '../components/MovieTable.js';
+//import MovieTable from '../components/MovieTable.js';
 import { listMoviesAPI } from '../util/API.js';
-import { ListGroup, ListGroupItem } from 'reactstrap';
-
+import { Table } from 'reactstrap';
 
 class listMovies extends Component {
     state = {
-        movies: []
+        movies: null,
+        movieList: []
     }
 
     handleInputChange = event => {
@@ -24,8 +24,12 @@ class listMovies extends Component {
         listMoviesAPI()
             .then(res => {
                 //console.log(res.data);
-                return this.setState({
+                this.setState({
                     movies: res.data
+                });
+
+                this.setState({
+                    movieList: Object.keys(res.data)
                 });
             })
             .catch(err => console.log(`error with retrieving movies: ${err}`));
@@ -41,10 +45,29 @@ class listMovies extends Component {
     render() {
         return (
             <>
-                {/* <MovieModal ></MovieModal> */}
-                {console.log(this.state.movies)}
                 {/* <p>hello test</p> */}
-                {/* <MovieTable movieObj={this.state.movies}></MovieTable> */}
+                <Table hover bordered dark className="text-center">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>First Added</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.movieList.map(name => {
+                            return <tr key={this.state.movieList.indexOf(name) + 1}>
+                                <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
+                                <td>{name}</td>
+                                <td>{this.state.movies[name]}</td>
+                            </tr>
+                        })}
+                        <tr>
+                            <th scope="row">Total:</th>
+                            <td><b>{this.state.movieList.length}</b></td>
+                        </tr>
+                    </tbody>
+                </Table>
             </>
         )
     }

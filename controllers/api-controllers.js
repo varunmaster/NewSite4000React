@@ -31,15 +31,19 @@ function listMovies(req, res) {
             //need to trim first element bc there is some weird character causing issues to get dir info
             movieFile[i] = movieFile[i].trim();
             let firstFile = fs.readdirSync(`C:\\Data\\Movies\\${movieFile[i]}`)[0];
-            let dateAdded = fs.statSync(`C:\\Data\\Movies\\${movieFile[i]}\\${firstFile}`).birthtime.toLocaleString();
-            //console.log(`date added:\n${dateAdded}`);
+            let dateAdded = fs.statSync(`C:\\Data\\Movies\\${movieFile[i]}\\${firstFile}`).mtime.toLocaleString();
+            // console.log(`movie we are looking at: ${firstFile}`);
+            // console.log(`date added: ${dateAdded}`);
+            // console.log("-----------------------------------------------------")
             let movie = movieFile[i];
             movieDateObj[movie] = dateAdded;
         }
         else {
             let firstFile = fs.readdirSync(`C:\\Data\\Movies\\${movieFile[i]}`)[0];
-            let dateAdded = fs.statSync(`C:\\Data\\Movies\\${movieFile[i]}\\${firstFile}`).birthtime.toLocaleString();
-            //console.log(`date added:\n${dateAdded}`);
+            let dateAdded = fs.statSync(`C:\\Data\\Movies\\${movieFile[i]}\\${firstFile}`).mtime.toLocaleString();
+            // console.log(`movie we are looking at:\n${firstFile}`);
+            // console.log(`date added:\n${dateAdded}`);
+            // console.log("-----------------------------------------------------")
             let movie = movieFile[i];
             movieDateObj[movie] = dateAdded;
         }
