@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { MovieModal } from '../components/MovieModal.js';
+import { MovieTable } from '../components/MovieTable.js';
 import { listMoviesAPI } from '../util/API.js';
 import { ListGroup, ListGroupItem } from 'reactstrap';
 
@@ -23,7 +23,7 @@ class listMovies extends Component {
     handleGetAllMovies = () => {
         listMoviesAPI()
             .then(res => {
-                console.log(`data returned after api call to backend: \n${res.data}`);
+                //console.log(res.data);
                 return this.setState({
                     movies: res.data
                 });
@@ -41,10 +41,10 @@ class listMovies extends Component {
     render() {
         return (
             <>
-                {console.log("We reached the front end")}
-                {console.log(this.state.movies)}
                 {/* <MovieModal ></MovieModal> */}
-                <p>hello test</p>
+                {console.log(this.state.movies)}
+                {/* <p>hello test</p> */}
+                {/* <MovieTable movieObj={this.state.movies}></MovieTable> */}
             </>
         )
     }
