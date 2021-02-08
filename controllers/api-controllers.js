@@ -3,25 +3,17 @@ const omdbToken = process.env.OMDBAPITOKEN
 let axios = require('axios');
 let fs = require('fs');
 
-function GetMovieInfoAPI(movieName, movieYear) {
-    //console.log("movie: ", movieName);
-    //let name = movieName.match(/(?<=)(.*)(.+?(?=\s\(\d{4}\)))/);
-    //console.log("regex match: ", name[0]);
-    //name = name[0].split(' ').join('+');
-    //console.log("split join: ", name);
-    //let year = movieName.match(/(?<=\()(\d{4})(?=\))/);
-    //console.log("year: ", year[0])
-
-    axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName}&y=${movieYear}`)
+async function GetMovieInfoAPI(movieName, movieYear) {
+    let data = await axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}&y=${movieYear.trim()}`)
         .then((res) => {
             //console.log(res.data);
             return res.data;
         }).catch((err) => {
             console.log(`error with api call to omdb: ${err}`);
         });
+    return data;
 };
 
-//app.get("/listMovies"
 function listMovies(req, res) {
     //create object that will contain key-value of movieName: DateAdded and then send to front-end
     let movieDateObj = {};
@@ -54,28 +46,25 @@ function listMovies(req, res) {
     return res.json(movieDateObj);
 };
 
-//app.post("/listMovieDetails"
 //need to receive the name and year in the request body
 function listMovieDetails(req, res) {
-    console.log(`Received data: ${req.body}`);
-    //use req.body.name and req.body.year to get details and then make api call to omdb
-    //use fs to get first added date and imdbId and other data. then send the whole json to front
-    const name = req.body.name;
-    const year = req.body.year;
-    let dateAdded = fs.statSync(`C:\\Data\\Movies\\${name} (${year})`, (err, info) => {
-        if (err)
-            return res.send(`Err getting file or file does not exist: ${err}`);
-        else {
-            return info.birthtime.toLocaleString();
-        }
-    });
-    let movieData = GetMovieInfoAPI(name, year);
-    let dataToSend = {
-        movieData: movieData,
-        dateAdded: dateAdded
-    };
-    //let front-end handle how to parse the data and what data to show/display
-    return res.json(dataToSend);
+    let movieInfo = GetMovieInfoAPI(req.body.name, req.body.year);
+    let dataToSend = {};
+    movieInfo.then(data => {
+        //console.log("something something: ", res);
+        dataToSend['Title'] = data.Title;
+        dataToSend['Year'] = data.Year;
+        dataToSend['Released'] = data.Released;
+        dataToSend['Runtime'] = data.Runtime;
+        dataToSend['Director'] = data.Director;
+        dataToSend['Actors'] = data.Actors;
+        dataToSend['Plot'] = data.Plot;
+        dataToSend['Poster'] = data.Poster;
+        dataToSend['Ratings'] = data.Ratings;
+        dataToSend['imdbID'] = data.imdbID;
+        //console.log("something  somethinao;sdf:\n", dataToSend);
+        return res.json(dataToSend);
+    }).catch(err => res.json(`Err with retrieving movie info ${err}`));
 };
 
 module.exports = { listMovies, listMovieDetails };

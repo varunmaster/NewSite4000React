@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-//import MovieTable from '../components/MovieTable.js';
-import { listMoviesAPI } from '../util/API.js';
-import { Table } from 'reactstrap';
+//import MovieModal from '../components/MovieModal.js';
+import { listMoviesAPI, getMovieDetailsAPI } from '../util/API.js';
+import { Table, Button } from 'reactstrap';
+import ReactModal from 'react-modal';
 
 class listMovies extends Component {
     state = {
         movies: null,
-        movieList: []
+        movieList: [],
+        movieDetails: null,
+        showModalComponent: false
     }
 
     handleInputChange = event => {
@@ -35,17 +38,27 @@ class listMovies extends Component {
             .catch(err => console.log(`error with retrieving movies: ${err}`));
     };
 
-    handleInputChange = event => { //this is boilerplate stuff and can be reused 
-        const { name, value } = event.target;
+    handleShowComponentAndMovieInfo = (movieName) => {
+        getMovieDetailsAPI(movieName)
+            .then(res => {
+                this.setState({
+                    movieDetails: res.data,
+                    showModalComponent: true
+                });
+            })
+            .catch(err => console.log(`error with getting movie detail: ${err}`))
+    }
+
+    handleClearModalInfo = () => {
         this.setState({
-            [name]: value
+            showModalComponent: false,
+            movieDetails: null
         });
-    };
+    }
 
     render() {
         return (
             <>
-                {/* <p>hello test</p> */}
                 <Table hover bordered dark className="text-center">
                     <thead>
                         <tr>
@@ -56,9 +69,13 @@ class listMovies extends Component {
                     </thead>
                     <tbody>
                         {this.state.movieList.map(name => {
-                            return <tr key={this.state.movieList.indexOf(name) + 1}>
+                            return <tr key={this.state.movieList.indexOf(name) + 1} data-name={name}>
                                 <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
-                                <td>{name}</td>
+                                <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
+                                <ReactModal isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
+                                    <p>{JSON.stringify(this.state.movieDetails)}</p>
+                                    <Button onClick={this.handleClearModalInfo}> CLOSE</Button>
+                                </ReactModal>
                                 <td>{this.state.movies[name]}</td>
                             </tr>
                         })}
