@@ -72,9 +72,11 @@ class listMovies extends Component {
                             return <tr key={this.state.movieList.indexOf(name) + 1} data-name={name}>
                                 <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
                                 <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
-                                <ReactModal isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
+                                <ReactModal ariaHideApp={false} isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
                                     <p>{JSON.stringify(this.state.movieDetails)}</p>
-                                    <Button onClick={this.handleClearModalInfo}> CLOSE</Button>
+                                    <div className='text-center'>
+                                        <Button onClick={this.handleClearModalInfo} color='danger'> CLOSE </Button>
+                                    </div>
                                 </ReactModal>
                                 <td>{this.state.movies[name]}</td>
                             </tr>
