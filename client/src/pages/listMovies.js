@@ -6,10 +6,7 @@ import ReactModal from 'react-modal';
 
 class listMovies extends Component {
     state = {
-        movies: null,
-        movieList: [],
-        movieDetails: null,
-        showModalComponent: false
+        movies: null, movieList: [], movieDetails: null, showModalComponent: false
     }
 
     handleInputChange = event => {
@@ -72,15 +69,15 @@ class listMovies extends Component {
                             return <tr key={this.state.movieList.indexOf(name) + 1} data-name={name}>
                                 <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
                                 <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
-                                <ReactModal ariaHideApp={false} isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
-                                    <p>{JSON.stringify(this.state.movieDetails)}</p>
-                                    <div className='text-center'>
-                                        <Button onClick={this.handleClearModalInfo} color='danger'> CLOSE </Button>
-                                    </div>
-                                </ReactModal>
                                 <td>{this.state.movies[name]}</td>
                             </tr>
                         })}
+                        {this.state.showModalComponent ? <ReactModal ariaHideApp={false} isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
+                            <p>{JSON.stringify(this.state.movieDetails)}</p>
+                            <div className='text-center'>
+                                <Button onClick={this.handleClearModalInfo} color='danger'> CLOSE </Button>
+                            </div>
+                        </ReactModal> : null}
                         <tr>
                             <th scope="row">Total:</th>
                             <td><b>{this.state.movieList.length}</b></td>
