@@ -8,8 +8,8 @@ export const listMoviesAPI = () => {
 export const getMovieDetailsAPI = (movieName) => {
     let name = movieName.split(/(.+?(?=\s\(\d{4}\)))/)[1];
     let year = movieName.split(/(?<=\()(\d{4})(?=\))/)[1];
-    
-    return axios.post(`/api/listMovieDetails`,{
+
+    return axios.post(`/api/listMovieDetails`, {
         name: name,
         year: year
     });

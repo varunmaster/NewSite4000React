@@ -3,8 +3,8 @@ const omdbToken = process.env.OMDBAPITOKEN
 let axios = require('axios');
 let fs = require('fs');
 
-async function GetMovieInfoAPI(movieName, movieYear) {
-    let data = await axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}&y=${movieYear.trim()}`)
+function GetMovieInfoAPI(movieName, movieYear) {
+    let data = axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}&y=${movieYear.trim()}`)
         .then((res) => {
             //console.log(res.data);
             return res.data;

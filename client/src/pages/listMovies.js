@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
-//import MovieModal from '../components/MovieModal.js';
+import MovieModal from '../components/MovieModal.js';
 import { listMoviesAPI, getMovieDetailsAPI } from '../util/API.js';
-import { Table, Button } from 'reactstrap';
-import ReactModal from 'react-modal';
+import { Table } from 'reactstrap';
+//import ReactModal from 'react-modal';
 
 class listMovies extends Component {
     state = {
-        movies: null,
-        movieList: [],
-        movieDetails: null,
-        showModalComponent: false
+        movies: null, movieList: [], movieDetails: null, showModalComponent: false
     }
 
     handleInputChange = event => {
@@ -72,13 +69,16 @@ class listMovies extends Component {
                             return <tr key={this.state.movieList.indexOf(name) + 1} data-name={name}>
                                 <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
                                 <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
-                                <ReactModal isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
-                                    <p>{JSON.stringify(this.state.movieDetails)}</p>
-                                    <Button onClick={this.handleClearModalInfo}> CLOSE</Button>
-                                </ReactModal>
                                 <td>{this.state.movies[name]}</td>
                             </tr>
                         })}
+                        {/* {this.state.showModalComponent ? <ReactModal ariaHideApp={false} isOpen={this.state.showModalComponent} onAfterClose={this.handleClearModalInfo} >
+                            <p>{JSON.stringify(this.state.movieDetails)}</p>
+                            <div className='text-center'>
+                                <Button onClick={this.handleClearModalInfo} color='danger'> CLOSE </Button>
+                            </div>
+                        </ReactModal> : null} */}
+                        {this.state.showModalComponent ? <MovieModal movieObj={this.state.movies} selectedMovie={this.state.movieDetails} open={this.state.showModalComponent} close={() => this.handleClearModalInfo()} /> : null}
                         <tr>
                             <th scope="row">Total:</th>
                             <td><b>{this.state.movieList.length}</b></td>
