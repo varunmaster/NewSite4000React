@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ShowModal from '../components/ShowModal.js';
 import { listShowsAPI, getShowDetailsAPI } from '../util/API.js';
+import GlobalNav from '../components/GlobalNav.js';
 import { Table } from 'reactstrap';
 
 class listMovies extends Component {
@@ -56,29 +57,32 @@ class listMovies extends Component {
     render() {
         return (
             <>
-                <Table hover bordered dark className="text-center">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>First Added</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.showsList.map(name => {
-                            return <tr key={this.state.showsList.indexOf(name) + 1} data-name={name}>
-                                <th scope="row">{this.state.showsList.indexOf(name) + 1}</th>
-                                <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
-                                <td>{this.state.shows[name]}</td>
+                <div><GlobalNav /></div>
+                <div>
+                    <Table hover bordered dark className="text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>First Added</th>
                             </tr>
-                        })}
-                        {this.state.showModalComponent ? <ShowModal showObj={this.state.shows} selectedShow={this.state.showDetails} open={this.state.showModalComponent} close={() => this.handleClearModalInfo()} /> : null}
-                        <tr>
-                            <th scope="row">Total:</th>
-                            <td><b>{this.state.showsList.length}</b></td>
-                        </tr>
-                    </tbody>
-                </Table>
+                        </thead>
+                        <tbody>
+                            {this.state.showsList.map(name => {
+                                return <tr key={this.state.showsList.indexOf(name) + 1} data-name={name}>
+                                    <th scope="row">{this.state.showsList.indexOf(name) + 1}</th>
+                                    <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
+                                    <td>{this.state.shows[name]}</td>
+                                </tr>
+                            })}
+                            {this.state.showModalComponent ? <ShowModal showObj={this.state.shows} selectedShow={this.state.showDetails} open={this.state.showModalComponent} close={() => this.handleClearModalInfo()} /> : null}
+                            <tr>
+                                <th scope="row">Total:</th>
+                                <td><b>{this.state.showsList.length}</b></td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </div>
             </>
         )
     }
