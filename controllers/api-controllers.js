@@ -3,15 +3,28 @@ const omdbToken = process.env.OMDBAPITOKEN
 let axios = require('axios');
 let fs = require('fs');
 
-function GetMovieInfoAPI(movieName, movieYear) {
-    let data = axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}&y=${movieYear.trim()}`)
-        .then((res) => {
-            //console.log(res.data);
-            return res.data;
-        }).catch((err) => {
-            console.log(`error with api call to omdb: ${err}`);
-        });
-    return data;
+//defaulting year to null for api call for shows
+function GetMovieInfoAPI(movieName, movieYear = null) {
+    if (movieYear === null) {
+        let data = axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}`)
+            .then((res) => {
+                //console.log(res.data);
+                return res.data;
+            }).catch((err) => {
+                console.log(`error with api call to omdb: ${err}`);
+            });
+        return data;
+    }
+    else {
+        let data = axios.post(`http://www.omdbapi.com/?apikey=${omdbToken}&t=${movieName.trim()}&y=${movieYear.trim()}`)
+            .then((res) => {
+                //console.log(res.data);
+                return res.data;
+            }).catch((err) => {
+                console.log(`error with api call to omdb: ${err}`);
+            });
+        return data;
+    }
 };
 
 function listMovies(req, res) {
@@ -87,4 +100,22 @@ function listShows(req, res) {
     return res.json(showDateObj);
 }
 
-module.exports = { listMovies, listMovieDetails, listShows };
+function listShowDetails(req, res) {
+    let showInfo = GetMovieInfoAPI(req.body.name);
+    let dataToSend = {};
+    showInfo.then(data => {
+        dataToSend['Title'] = data.Title;
+        dataToSend['Year'] = data.Year;
+        dataToSend['Released'] = data.Released;
+        dataToSend['Genre'] = data.Genre;
+        dataToSend['Actors'] = data.Actors;
+        dataToSend['Plot'] = data.Plot;
+        dataToSend['Poster'] = data.Poster;
+        dataToSend['Ratings'] = data.Ratings;
+        dataToSend['imdbID'] = data.imdbID;
+        dataToSend['totalSeasons'] = data.totalSeasons;
+        return res.json(dataToSend);
+    }).catch(err => res.json(`Err with retrieving movie info ${err}`));
+};
+
+module.exports = { listMovies, listMovieDetails, listShows, listShowDetails };

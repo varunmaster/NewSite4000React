@@ -17,4 +17,10 @@ export const getMovieDetailsAPI = (movieName) => {
 
 export const listShowsAPI = () => {
     return axios.get(`/api/listShows`);
-}
+};
+
+export const getShowDetailsAPI = (name) => {
+    return axios.post(`/api/listShowDetails`, {
+        name: name
+    });
+};
