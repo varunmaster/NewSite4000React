@@ -67,4 +67,24 @@ function listMovieDetails(req, res) {
     }).catch(err => res.json(`Err with retrieving movie info ${err}`));
 };
 
-module.exports = { listMovies, listMovieDetails };
+function listShows(req, res) {
+    //console.log("hello :)");
+    let showDateObj = {};
+    let shows = [];
+    shows = fs.readdirSync(`E:\\Shows`, (err, dirs) => {
+        if (err)
+            console.log("err retrieving all shows dir: ", err);
+        //return res.json(err);
+        else {
+            console.log(dirs);
+        }
+    });
+    shows.map(show => {
+        let date = fs.statSync(`E:\\Shows\\${show}`).birthtime.toLocaleString();
+        showDateObj[show] = date;
+    });
+    //console.log("look here dummy: ", showDateObj);
+    return res.json(showDateObj);
+}
+
+module.exports = { listMovies, listMovieDetails, listShows };

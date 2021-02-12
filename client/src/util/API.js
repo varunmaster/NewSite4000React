@@ -14,3 +14,7 @@ export const getMovieDetailsAPI = (movieName) => {
         year: year
     });
 };
+
+export const listShowsAPI = () => {
+    return axios.get(`/api/listShows`);
+}
