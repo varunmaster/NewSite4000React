@@ -39,7 +39,7 @@ class Home extends Component {
                         <Card className="bg-dark text-center">
                             <center><img width="300px" src={shows} alt="movies" /></center>
                             <CardBody>
-                                {/* <Button className="btn btn-lg btn-info" href="/listShows">Show me the damn shows!</Button> */}
+                                <Button className="btn btn-lg btn-info" href="/listShows">Show me the damn shows!</Button>
                             </CardBody>
                         </Card>
                     </CardDeck>

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import MovieModal from '../components/MovieModal.js';
 import { listMoviesAPI, getMovieDetailsAPI } from '../util/API.js';
 import { Table } from 'reactstrap';
-//import ReactModal from 'react-modal';
 
 class listMovies extends Component {
     state = {
@@ -25,12 +24,13 @@ class listMovies extends Component {
             .then(res => {
                 //console.log(res.data);
                 this.setState({
-                    movies: res.data
-                });
-
-                this.setState({
+                    movies: res.data,
                     movieList: Object.keys(res.data)
                 });
+
+                // this.setState({
+                //     movieList: Object.keys(res.data)
+                // });
             })
             .catch(err => console.log(`error with retrieving movies: ${err}`));
     };

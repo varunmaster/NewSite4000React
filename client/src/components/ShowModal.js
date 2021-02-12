@@ -1,11 +1,10 @@
 import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-const MovieModal = ({ selectedMovie, open, close, movieObj }) => {
+const MovieModal = ({ selectedShow, open, close, showObj }) => {
   //const [modal, setModal] = useState(false);
   //const toggle = () => setModal(!modal);
-  const { Title, Plot, Year, Runtime, Released, Poster, imdbID, Actors, Ratings } = selectedMovie;
-  const fullName = Title + " (" + Year + ")";
+  const { Title, Plot, Genre, Released, Poster, imdbID, Actors, Ratings, totalSeasons } = selectedShow;
   const link = "https://www.imdb.com/title/" + imdbID;
 
   return (
@@ -13,8 +12,8 @@ const MovieModal = ({ selectedMovie, open, close, movieObj }) => {
       {/* {console.log("look here dummy:\n", selectedMovie, "\nopen is: ", open)} */}
       {<Modal isOpen={open} toggle={close} className="modal-dialog modal-dialog-centered modal-lg">
         <ModalHeader toggle={close} className="bg-dark">
-          <h2><b>{fullName}</b></h2>
-          <small>Date added to Plex: {movieObj[fullName]}</small>
+          <h2><b>{Title}</b></h2>
+          <small>Date added to Plex: {showObj[Title]}</small>
         </ModalHeader>
         <ModalBody className="bg-dark">
           <div className="row">
@@ -32,8 +31,8 @@ const MovieModal = ({ selectedMovie, open, close, movieObj }) => {
               <hr />
               <div className="card border-light bg-dark mb-3">
                 <div className="card-body">
-                  <h5 className="card-title">Runtime:</h5>
-                  <p className="card-text">{Runtime}</p>
+                  <h5 className="card-title">Total Seasons:</h5>
+                  <p className="card-text">{totalSeasons}</p>
                 </div>
               </div>
               <hr />
@@ -63,8 +62,16 @@ const MovieModal = ({ selectedMovie, open, close, movieObj }) => {
                   })}</ul>
                 </div>
               </div>
+              <hr />
+              <div className="card border-light bg-dark mb-3">
+                <div className="card-body">
+                  <h5 className="card-title">Genre:</h5>
+                  <ul>{Genre}</ul>
+                </div>
+              </div>
               </div>
             </div>
+
             {/* <hr /> */}
           </div>
         </ModalBody>
