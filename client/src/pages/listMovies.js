@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import MovieModal from '../components/MovieModal.js';
 import GlobalNav from '../components/GlobalNav.js';
 import { listMoviesAPI, getMovieDetailsAPI } from '../util/API.js';
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 
 class listMovies extends Component {
     state = {
@@ -71,7 +71,7 @@ class listMovies extends Component {
                             {this.state.movieList.map(name => {
                                 return <tr key={this.state.movieList.indexOf(name) + 1} data-name={name}>
                                     <th scope="row">{this.state.movieList.indexOf(name) + 1}</th>
-                                    <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}>{name}</td>
+                                    <td data-name={name} onClick={() => this.handleShowComponentAndMovieInfo(name)}><Button color="secondary" className="bg-dark movies-shows-list">{name}</Button></td>
                                     <td>{this.state.movies[name]}</td>
                                 </tr>
                             })}
