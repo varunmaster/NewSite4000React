@@ -13,6 +13,17 @@ body {
   border: none;
 }
 
+.close {
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+  color: rgb(255, 0, 0);
+  text-shadow: 0 1px 0 rgb(255, 0, 0);
+  filter: alpha(opacity=20);
+  opacity: 1;
+}
+
 li {
   list-style-type: none;
   margin-top: 10px;
