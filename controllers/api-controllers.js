@@ -2,6 +2,27 @@ const router = require('express').Router();
 const omdbToken = process.env.OMDBAPITOKEN
 let axios = require('axios');
 let fs = require('fs');
+const redis = require('redis');
+const redisClient = redis.createClient({
+    port: 6379,                         // replace with your port
+    host: '192.168.1.191'//,              // replace with your hostanme or IP address
+    //password: process.env.PWD//,        // replace with your password
+    // optional, if using SSL
+    // use `fs.readFile[Sync]` or another method to bring these values in
+    //tls       : {
+    //  key  : stringValueOfKeyFile,  
+    //  cert : stringValueOfCertFile,
+    //  ca   : [ stringValueOfCaCertFile ]
+    //}
+});
+
+redisClient.on("error", function (error) {
+    console.error("error connecting with redis docker server: ", error);
+});
+
+redisClient.on("connect", () => {
+    console.error("successful connection to redis docker server");
+});
 
 //defaulting year to null for api call for shows
 function GetMovieInfoAPI(movieName, movieYear = null) {
@@ -61,6 +82,8 @@ function listMovies(req, res) {
 
 //need to receive the name and year in the request body
 function listMovieDetails(req, res) {
+    //console.log("aa;lksdjfl;akdjsfa;lkjsdf:\n", req.body.name + " " + "(" + req.body.year + ")");
+    console.log(redisClient.get("test", redis.print));
     let movieInfo = GetMovieInfoAPI(req.body.name, req.body.year);
     let dataToSend = {};
     movieInfo.then(data => {
