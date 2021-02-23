@@ -3,26 +3,6 @@ const omdbToken = process.env.OMDBAPITOKEN
 let axios = require('axios');
 let fs = require('fs');
 const redis = require('redis');
-const redisClient = redis.createClient({
-    port: 6379,                         // replace with your port
-    host: '192.168.1.191'//,              // replace with your hostanme or IP address
-    //password: process.env.PWD//,        // replace with your password
-    // optional, if using SSL
-    // use `fs.readFile[Sync]` or another method to bring these values in
-    //tls       : {
-    //  key  : stringValueOfKeyFile,  
-    //  cert : stringValueOfCertFile,
-    //  ca   : [ stringValueOfCaCertFile ]
-    //}
-});
-
-redisClient.on("error", function (error) {
-    console.error("error connecting with redis docker server: ", error);
-});
-
-redisClient.on("connect", () => {
-    console.error("successful connection to redis docker server");
-});
 
 //defaulting year to null for api call for shows
 function GetMovieInfoAPI(movieName, movieYear = null) {
@@ -82,25 +62,75 @@ function listMovies(req, res) {
 
 //need to receive the name and year in the request body
 function listMovieDetails(req, res) {
-    //console.log("aa;lksdjfl;akdjsfa;lkjsdf:\n", req.body.name + " " + "(" + req.body.year + ")");
-    console.log(redisClient.get("test", redis.print));
-    let movieInfo = GetMovieInfoAPI(req.body.name, req.body.year);
-    let dataToSend = {};
-    movieInfo.then(data => {
-        //console.log("something something: ", res);
-        dataToSend['Title'] = data.Title;
-        dataToSend['Year'] = data.Year;
-        dataToSend['Released'] = data.Released;
-        dataToSend['Runtime'] = data.Runtime;
-        dataToSend['Director'] = data.Director;
-        dataToSend['Actors'] = data.Actors;
-        dataToSend['Plot'] = data.Plot;
-        dataToSend['Poster'] = data.Poster;
-        dataToSend['Ratings'] = data.Ratings;
-        dataToSend['imdbID'] = data.imdbID;
-        //console.log("something  somethinao;sdf:\n", dataToSend);
-        return res.json(dataToSend);
-    }).catch(err => res.json(`Err with retrieving movie info ${err}`));
+    const redisClient = redis.createClient({
+        port: 6379,                         // replace with your port
+        host: '192.168.1.191'//,              // replace with your hostanme or IP address
+        //password: process.env.PWD//,        // replace with your password
+        // optional, if using SSL
+        // use `fs.readFile[Sync]` or another method to bring these values in
+        //tls       : {
+        //  key  : stringValueOfKeyFile,  
+        //  cert : stringValueOfCertFile,
+        //  ca   : [ stringValueOfCaCertFile ]
+        //}
+    });
+    redisClient.on("error", function (error) {
+        console.error("error connecting with redis docker server: ", error);
+    });
+    redisClient.on("connect", () => {
+        console.error("successful connection to redis docker server");
+    });
+
+    let movieName = req.body.name + " " + "(" + req.body.year + ")";
+    redisClient.get(movieName, (err, val) => {
+        if (err)
+            console.log("error quering redis: ", err);
+        else {
+            //console.log("querying for movie: ", movieName, " and data returned: ", val);
+            if (val === null) {
+                let movieInfo = GetMovieInfoAPI(req.body.name, req.body.year);
+                let dataToSend = {};
+                movieInfo.then(data => {
+                    //console.log("something something: ", res);
+                    dataToSend['Title']     = data.Title;
+                    dataToSend['Year']      = data.Year;
+                    dataToSend['Released']  = data.Released;
+                    dataToSend['Runtime']   = data.Runtime;
+                    dataToSend['Director']  = data.Director;
+                    dataToSend['Actors']    = data.Actors;
+                    dataToSend['Plot']      = data.Plot;
+                    dataToSend['Poster']    = data.Poster;
+                    dataToSend['Ratings']   = data.Ratings;
+                    dataToSend['imdbID']    = data.imdbID;
+                    //console.log("something  somethinao;sdf:\n", dataToSend);
+                    //console.log("setting redis data for: ", movieName, " with data: \n", dataToSend);
+                    let dataToSendJSONString = JSON.stringify(dataToSend);
+                    //console.log("ooga booga:\n", dataToSend);
+                    redisClient.set(movieName, dataToSendJSONString, (err, reply) => {
+                        if (err)
+                            console.log("Err setting redis key-value: ", err);
+                        else {
+                            console.log(movieName, " not in redis, setting now: ", reply);
+                        }
+                    });
+                    console.log("quitting connection to redis server");
+                    redisClient.quit();
+                    return res.json(dataToSend);
+                }).catch(err => {
+                    console.log("quitting connection to redis server");
+                    redisClient.quit();
+                    return res.json(`Err with retrieving movie info ${err}`);
+                });
+            }
+            else {
+                console.log("got data from redis for movie: ", movieName);
+                console.log("quitting connection to redis server");
+                redisClient.quit();
+                return res.json(JSON.parse(val));
+            }
+            //redisClient.quit();
+        }
+    });
 };
 
 function listShows(req, res) {
@@ -124,21 +154,73 @@ function listShows(req, res) {
 }
 
 function listShowDetails(req, res) {
-    let showInfo = GetMovieInfoAPI(req.body.name);
-    let dataToSend = {};
-    showInfo.then(data => {
-        dataToSend['Title'] = data.Title;
-        dataToSend['Year'] = data.Year;
-        dataToSend['Released'] = data.Released;
-        dataToSend['Genre'] = data.Genre;
-        dataToSend['Actors'] = data.Actors;
-        dataToSend['Plot'] = data.Plot;
-        dataToSend['Poster'] = data.Poster;
-        dataToSend['Ratings'] = data.Ratings;
-        dataToSend['imdbID'] = data.imdbID;
-        dataToSend['totalSeasons'] = data.totalSeasons;
-        return res.json(dataToSend);
-    }).catch(err => res.json(`Err with retrieving movie info ${err}`));
+    const redisClient = redis.createClient({
+        port: 6379,                         // replace with your port
+        host: '192.168.1.191'//,              // replace with your hostanme or IP address
+        //password: process.env.PWD//,        // replace with your password
+        // optional, if using SSL
+        // use `fs.readFile[Sync]` or another method to bring these values in
+        //tls       : {
+        //  key  : stringValueOfKeyFile,  
+        //  cert : stringValueOfCertFile,
+        //  ca   : [ stringValueOfCaCertFile ]
+        //}
+    });
+    redisClient.on("error", function (error) {
+        console.error("error connecting with redis docker server: ", error);
+    });
+    redisClient.on("connect", () => {
+        console.error("successful connection to redis docker server");
+    });
+    redisClient.get(req.body.name, (err, val) => {
+        if (err)
+            console.log("error quering redis: ", err);
+        else {
+            //console.log("querying for movie: ", movieName, " and data returned: ", val);
+            if (val === null) {
+                let showInfo = GetMovieInfoAPI(req.body.name);
+                let dataToSend = {};
+                showInfo.then(data => {
+                    //console.log("something something: ", res);
+                    dataToSend['Title']         = data.Title;
+                    dataToSend['Year']          = data.Year;
+                    dataToSend['Released']      = data.Released;
+                    dataToSend['Genre']         = data.Genre;
+                    dataToSend['Actors']        = data.Actors;
+                    dataToSend['Plot']          = data.Plot;
+                    dataToSend['Poster']        = data.Poster;
+                    dataToSend['Ratings']       = data.Ratings;
+                    dataToSend['imdbID']        = data.imdbID;
+                    dataToSend['totalSeasons']  = data.totalSeasons;
+                    //console.log("something  somethinao;sdf:\n", dataToSend);
+                    //console.log("setting redis data for: ", movieName, " with data: \n", dataToSend);
+                    let dataToSendJSONString = JSON.stringify(dataToSend);
+                    //console.log("ooga booga:\n", dataToSend);
+                    redisClient.set(req.body.name, dataToSendJSONString, (err, reply) => {
+                        if (err)
+                            console.log("Err setting redis key-value: ", err);
+                        else {
+                            console.log(req.body.name, " not in redis, setting now: ", reply);
+                        }
+                    });
+                    console.log("quitting connection to redis server");
+                    redisClient.quit();
+                    return res.json(dataToSend);
+                }).catch(err => {
+                    console.log("quitting connection to redis server");
+                    redisClient.quit();
+                    return res.json(`Err with retrieving movie info ${err}`);
+                });
+            }
+            else {
+                console.log("got data from redis for show: ", req.body.name);
+                console.log("quitting connection to redis server");
+                redisClient.quit();
+                return res.json(JSON.parse(val));
+            }
+            //redisClient.quit();
+        }
+    });
 };
 
 module.exports = { listMovies, listMovieDetails, listShows, listShowDetails };

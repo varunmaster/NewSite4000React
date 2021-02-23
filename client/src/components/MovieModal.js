@@ -49,18 +49,18 @@ const MovieModal = ({ selectedMovie, open, close, movieObj }) => {
               <div className="card border-light bg-dark mb-3">
                 <div className="card-body">
                   <h5 className="card-title">Ratings:</h5>
-                  <ul>{Ratings.map(rating => {
+                  <ul>{Ratings ? Ratings.map(rating => {
                     return <li key={Ratings.indexOf(rating)}>{rating.Source}: {rating.Value}</li>
-                  })}</ul>
+                  }): "No ratings found"}</ul>
                 </div>
               </div>
               <hr />
               <div className="card border-light bg-dark mb-3">
                 <div className="card-body">
                   <h5 className="card-title">Cast:</h5>
-                  <ul>{Actors.split(",").map(actor => {
+                  <ul>{Actors ? Actors.split(",").map(actor => {
                     return <li key={actor}>{actor}</li> 
-                  })}</ul>
+                  }) : "No actors found" }</ul>
                 </div>
               </div>
               </div>
