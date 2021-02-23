@@ -110,7 +110,7 @@ function listMovieDetails(req, res) {
                         if (err)
                             console.log("Err setting redis key-value: ", err);
                         else {
-                            console.log("not in redis, setting now: ", reply);
+                            console.log(movieName, " not in redis, setting now: ", reply);
                         }
                     });
                     console.log("quitting connection to redis server");
@@ -123,7 +123,7 @@ function listMovieDetails(req, res) {
                 });
             }
             else {
-                console.log("got data from redis");
+                console.log("got data from redis for movie: ", movieName);
                 console.log("quitting connection to redis server");
                 redisClient.quit();
                 return res.json(JSON.parse(val));
